@@ -1,0 +1,84 @@
+# SPEC-001: Financial News Signal Microservice (fin-signal-service)
+
+## 1. 概述 (Overview)
+`fin-signal-service` 是一個專為量化交易與金融文本事件分析設計的非同步微服務。
+其核心職責是接收單筆或批次金融新聞/財報文本，抽取核心情緒極性（Sentiment Polarity）、事件分類（Event Categorization）與量化交易信號強度（Signal Score [-1.0, 1.0]），並輸出結構化、強型別校驗的結果。
+
+## 2. 目標職缺技術對標 (Alignment with Quant/AI Job Specs)
+- **現代 Python 工程化**：Python 3.11+、強型別 Type Hints、Pydantic v2 嚴格驗證。
+- **高效非同步架構**：FastAPI 全非同步（`async/await`）、非阻塞 I/O 架構設計。
+- **測試驅動開發 (TDD)**：遵循「紅燈（Fail） -> 綠燈（Pass） -> 重構（Refactor）」開發節奏。
+- **工程品質規範**：Ruff 程式碼品質與風格檢查，Pytest 非同步整合測試。
+
+---
+
+## 3. 架構與目錄結構 (Directory Layout)
+```text
+fin-signal-service/
+├── SPEC.md
+├── pyproject.toml
+├── src/
+│   └── fin_signal/
+│       ├── __init__.py
+│       ├── schemas.py      # Pydantic v2 請求/回應與量化信號結構
+│       ├── service.py      # 核心領域邏輯：信號分析引擎 (非同步抽象)
+│       └── main.py         # FastAPI 應用與路由端點
+└── tests/
+    └── test_signal.py      # Pytest + httpx 測試套件 (單元測試與 API 測試)
+```
+
+---
+
+## 4. 資料模型規格 (Data Contracts / Schemas)
+
+### 4.1 核心枚舉 (Enums)
+- `SentimentType`:
+  - `BULLISH` (看多)
+  - `BEARISH` (看空)
+  - `NEUTRAL` (中性)
+- `EventCategory`:
+  - `EARNINGS` (財報營收)
+  - `MACRO` (宏觀經濟與央行政策)
+  - `REGULATORY` (監管法規)
+  - `M_AND_A` (併購重組)
+  - `GENERAL` (一般資訊)
+
+### 4.2 請求與回應物件 (Pydantic Models)
+- **`NewsAnalysisRequest`**:
+  - `ticker` (str, 1-10 字符, 大寫, 如 `AAPL`, `2330.TW`)
+  - `headline` (str, 5-200 字符)
+  - `content` (str, 10-10000 字符)
+  - `timestamp` (datetime, 可選，預設 UTC now)
+
+- **`SignalAnalysisResponse`**:
+  - `request_id` (str, UUID)
+  - `ticker` (str)
+  - `sentiment` (SentimentType)
+  - `event_category` (EventCategory)
+  - `signal_score` (float, 範圍 `[-1.0, 1.0]`, 保留 2 位小數)
+  - `confidence` (float, 範圍 `[0.0, 1.0]`)
+  - `rationale` (str, 簡短理由分析)
+  - `latency_ms` (float, 處理耗時毫秒)
+
+---
+
+## 5. API 介面規格 (API Endpoints)
+
+| 方法 | 路徑 | 說明 | 狀態碼 |
+|---|---|---|---|
+| `GET` | `/health` | 健康檢查端點 | `200 OK` |
+| `POST` | `/api/v1/signals/analyze` | 單筆新聞信號分析 | `200 OK`, `422 Unprocessable Entity` |
+
+---
+
+## 6. TDD 開發路徑 (TDD Roadmap)
+1. **階段 1：紅燈測試**
+   - 撰寫 `test_signal.py`，覆蓋 `/health`、資料驗證（無效 ticker、缺漏欄位）與 `/api/v1/signals/analyze` 端點功能。
+   - 執行測試，確認均以失敗（Red）告終。
+2. **階段 2：綠燈實作**
+   - 實作 `schemas.py` 定義 Pydantic v2 模型。
+   - 實作 `service.py` 處理領域信號計算與異步分析邏輯。
+   - 實作 `main.py` 掛載 FastAPI 路由。
+   - 執行測試，確認全數通過（Green）。
+3. **階段 3：重構與工程規範**
+   - 代碼重構、Ruff 靜態分析與型別優化。

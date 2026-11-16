@@ -1,0 +1,9 @@
+SPEC.md
+pyproject.toml
+src/fin_signal/__init__.py
+src/fin_signal_service.egg-info/PKG-INFO
+src/fin_signal_service.egg-info/SOURCES.txt
+src/fin_signal_service.egg-info/dependency_links.txt
+src/fin_signal_service.egg-info/requires.txt
+src/fin_signal_service.egg-info/top_level.txt
+tests/test_signal.py
