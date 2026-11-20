@@ -6,6 +6,7 @@ on:
     paths:
       - fin-signal-service/LEARNING_PROGRESS.html
       - fin-signal-service/LEARNING_PROGRESS.md
+      - fin-signal-service/book/**
       - .github/workflows/deploy-learning-pages.yml
   workflow_dispatch:
 
@@ -37,6 +38,8 @@ jobs:
           mkdir -p _site
           cp fin-signal-service/LEARNING_PROGRESS.html _site/index.html
           cp fin-signal-service/LEARNING_PROGRESS.md _site/LEARNING_PROGRESS.md
+          mkdir -p _site/book
+          cp fin-signal-service/book/chapter-01.html _site/book/chapter-01.html
 
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
