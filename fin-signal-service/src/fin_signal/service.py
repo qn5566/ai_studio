@@ -1,3 +1,4 @@
+import re
 import time
 import uuid
 
@@ -86,6 +87,11 @@ class SignalAnalysisService:
             confidence = 0.6
             rationale = "Mixed sentiment signals detected with equal polarity."
 
+        # 3. 抽取目標價 (Target Price)
+        pattern = r"target price (?:to|of|is)?\s*[:$]?\s*([0-9]+(?:\.[0-9]+)?)"
+        price_match = re.search(pattern, text)
+        target_price = float(price_match.group(1)) if price_match else None
+
         elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
         return SignalAnalysisResponse(
@@ -97,4 +103,5 @@ class SignalAnalysisService:
             confidence=confidence,
             rationale=rationale,
             latency_ms=elapsed_ms,
+            target_price=target_price,
         )

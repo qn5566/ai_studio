@@ -35,9 +35,13 @@ async def test_signal_service_domain_logic():
         headline="Apple beats earnings expectations with record iPhone revenue",
         content=(
             "Apple today reported quarterly revenue up 15% year over year, "
-            "driven by strong growth in services and iPhone sales."
+            "driven by strong growth in services and iPhone sales. "
+            "Analysts set target price to 250.0."
         ),
+        source="Bloomberg",
     )
+    assert req.source == "Bloomberg"
+
     result = await service.analyze(req)
 
     assert result.ticker == "AAPL"
@@ -46,6 +50,7 @@ async def test_signal_service_domain_logic():
     assert result.signal_score > 0.0
     assert 0.0 <= result.confidence <= 1.0
     assert result.latency_ms >= 0.0
+    assert result.target_price == 250.0
 
 
 @pytest.mark.asyncio

@@ -49,6 +49,10 @@ class NewsAnalysisRequest(BaseModel):
         default_factory=lambda: datetime.now(UTC),
         description="新聞發布時間 (UTC)",
     )
+    source: str = Field(
+        default="UNKNOWN", 
+        description="新聞來源，例如 Bloomberg, Reuters",
+    )
 
 
 class SignalAnalysisResponse(BaseModel):
@@ -74,3 +78,8 @@ class SignalAnalysisResponse(BaseModel):
     )
     rationale: str = Field(..., description="分析推理理由")
     latency_ms: float = Field(..., description="處理延遲 (毫秒)")
+    target_price: float | None = Field(
+        default=None,
+        gt=0.0,
+        description="分析出的目標價",
+    )
