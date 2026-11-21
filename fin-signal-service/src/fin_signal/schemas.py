@@ -80,6 +80,6 @@ class SignalAnalysisResponse(BaseModel):
     latency_ms: float = Field(..., description="處理延遲 (毫秒)")
     target_price: float | None = Field(
         default=None,
-        gt=0.0,
+        ge=0.0,
         description="分析出的目標價",
     )

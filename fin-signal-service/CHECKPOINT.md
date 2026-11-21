@@ -1,55 +1,41 @@
 # 學習進度存檔與交接紀錄 (Checkpoint)
 
-**存檔時間**：2026-11-21 23:51 (Taipei Time)  
-**目前定位**：**第二章：模型 API 與結構化輸出（第 5～6 課）**  
-**核心主題**：**LLM 結構化輸出（Structured Outputs）實戰**
+**存檔時間**：2026-11-22 00:07 (Taipei Time)  
+**重大里程碑**：🎉 **真實 Gemini LLM 結構化輸出（Structured Outputs）成功跑通！**
 
 ---
 
-## 📍 為什麼現在正是「LLM 結構化輸出」？
+## 🏆 今晚歷史性突破成果
 
-沒錯！你抓得完全精準！在我們的課程課表中：
-- **第一章（第 1～4 課）**：我們剛完成了 Python、FastAPI、Pydantic v2 與 TDD 紅綠燈架構，這是地基。
-- **第二章（第 5～6 課）**：主題正是 **「模型 API 與結構化輸出（Structured Outputs）」**！
+你剛剛成功執行了真正的大語言模型（Gemini 2.5 Flash），並將一篇複雜的中文財報新聞，透過 Google GenAI 官方 SDK **100% 約束輸出成我們自訂的 Pydantic 模型**：
 
-之所以要先學 Pydantic，就是因為 **現代 LLM 的「結構化輸出」底層 100% 是靠 Pydantic 來約束與生成的**！
-
----
-
-## 🎯 進入睡前的「核心觀念 1 分鐘速覽」（帶著好概念入睡）
-
-### 1. 傳統 LLM 的痛點（不聽話）：
-如果你問 ChatGPT：「請分析這篇新聞並回傳 JSON。」
-它常常會回覆：
-> 「好的！以下是您要求的 JSON 分析結果：```json { ... } ``` 祝您交易愉快！」
-
-❌ **結果**：後端程式用 `json.loads()` 直接 Crash（因為多了前後的問候語），甚至 key 打錯、欄位漏掉。
-
-### 2. 現代 AI 工程的突破：**LLM Structured Outputs（結構化輸出）**
-我們把在 `schemas.py` 定義的 Pydantic 模型（例如 `SignalAnalysisResponse`）直接塞給模型 API：
-```python
-# OpenAI SDK 的用法
-response = await client.beta.chat.completions.parse(
-    model="gpt-4o-mini",
-    messages=[...],
-    response_format=SignalAnalysisResponse,  # 👈 關鍵：直接丟 Pydantic 類別！
-)
-result: SignalAnalysisResponse = response.choices[0].message.parsed
+```text
+股票代號 (ticker)        : 台積電
+情緒判定 (sentiment)     : BULLISH (看多)
+事件類別 (event_category): EARNINGS (財報營收)
+信號強度 (signal_score)  : 0.9 (強烈看漲)
+信心水準 (confidence)    : 0.95
+分析理由 (rationale)     : 台積電公布10月營收達新台幣3,142億元...美系外資重申「強力買進」...
+解析目標價 (target_price): 1400.0 (精準抓出數字浮點數，而非字串！)
 ```
-🔥 **神奇之處**：
-- 模型**在生成每一個 Token 的當下**，就被約束狀態機（Grammar/Schema Sampling）死死卡住。
-- **保證 100% 吐出合法 JSON**，絕對不會漏欄位，型別絕對正確，直接無痛轉成 Python 物件！
+
+### 🎯 面試級踩坑經驗收穫：
+1. **Pydantic 與 OpenAPI 差異**：Gemini 支援 `minimum`（`ge=0.0`），遇到 `exclusiveMinimum`（`gt=0.0`）會噴出驗證錯誤，我們成功調校至通用規範。
+2. **API 版本控制**：使用 Google GenAI SDK 進行結構化輸出時，需指定 `api_version="v1beta"` 開啟 JSON 結構化取樣功能。
+3. **資料契約完勝傳統 Prompt**：完全不需要寫正則表達式，不需要字串切割，直接得到型別安全的 Python 物件！
 
 ---
 
-## 🛌 下次上課直接動手（任務清單）
+## 📍 目前進度：**第二階段（第 5～6 課）核心能力完全掌握！**
 
-等你睡飽醒來，我們直接從**「把 service.py 的規則替換成 LLM Structured Outputs」**開工：
-
-1. **選擇接入的模型提供商**（OpenAI / Gemini / 本地 Ollama / 測試用 Mock）。
-2. **在 service.py 中呼叫 LLM 並綁定 Pydantic**。
-3. **執行 `pytest` 驗證**：看著 LLM 讀懂新聞語境，精準輸出情緒、分數與目標價！
+```text
+【第一階段：Python 與服務測試基礎】➔ 【✅ 全部通關】
+【第二階段：模型 API 與結構化輸出】➔ 【🔥 核心突破！】
+├── ✅ 第 5 課：操作 FastAPI 與接入模型 SDK（已成功連通 Google GenAI SDK）
+├── ✅ 第 6 課：結構化分析結果（已成功利用 response_schema 輸出 SignalAnalysisResponse）
+└── ⏳ 下一步：把這段邏輯封裝回 service.py 與 FastAPI 端點，並設計 Mock 防扣款測試！
+```
 
 ---
 
-進度檔已為你更新確認完畢！你可以安心去睡了，明天下次我們就直接進攻 **LLM 結構化輸出** 的實際代碼！晚安！😴
+> 今晚這一步是質的飛躍！從傳統的後端工程師，正式跨入 **能夠駕馭真實 AI 模型的現代 AI 工程師**。現在帶著這份戰果，帶著滿滿的成就感好好去睡一覺吧！晚安！😴
