@@ -89,8 +89,11 @@ class SignalAnalysisService:
 
         # 3. 抽取目標價 (Target Price)
         pattern = r"target price (?:to|of|is)?\s*[:$]?\s*([0-9]+(?:\.[0-9]+)?)"
-        price_match = re.search(pattern, text)
+        price_match = re.search(
+            pattern, f"{request.headline} {request.content}", flags=re.IGNORECASE
+        )
         target_price = float(price_match.group(1)) if price_match else None
+        target_price_evidence = price_match.group(0) if price_match else None
 
         elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
@@ -104,4 +107,5 @@ class SignalAnalysisService:
             rationale=rationale,
             latency_ms=elapsed_ms,
             target_price=target_price,
+            target_price_evidence=target_price_evidence,
         )

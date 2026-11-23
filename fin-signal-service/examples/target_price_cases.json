@@ -1,0 +1,23 @@
+[
+  {
+    "name": "有分析師目標價",
+    "headline": "台積電獲外資調升目標價",
+    "content": "美系外資重申台積電買進評級，並將目標價調升至 1400.0 元。",
+    "expected_target_price": 1400.0,
+    "example_evidence": "目標價調升至 1400.0 元"
+  },
+  {
+    "name": "只有營收",
+    "headline": "台積電公布最新營收數據",
+    "content": "台積電本月營收達 1400 億元，較去年同期增加，新聞未提供分析師評價。",
+    "expected_target_price": null,
+    "example_evidence": null
+  },
+  {
+    "name": "只有目前股價",
+    "headline": "台積電今日股價行情更新",
+    "content": "台積電目前股價為 1000 元，今日成交量增加，新聞未提供分析師評價。",
+    "expected_target_price": null,
+    "example_evidence": null
+  }
+]

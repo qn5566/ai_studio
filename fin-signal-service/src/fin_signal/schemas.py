@@ -83,3 +83,7 @@ class SignalAnalysisResponse(BaseModel):
         ge=0.0,
         description="分析出的目標價",
     )
+    target_price_evidence: str | None = Field(
+        default=None,
+        description="逐字引用支持目標價的新聞原文；未提及目標價則為 null",
+    )

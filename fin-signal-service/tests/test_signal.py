@@ -51,6 +51,7 @@ async def test_signal_service_domain_logic():
     assert 0.0 <= result.confidence <= 1.0
     assert result.latency_ms >= 0.0
     assert result.target_price == 250.0
+    assert result.target_price_evidence == "target price to 250.0"
 
 
 @pytest.mark.asyncio
@@ -71,6 +72,8 @@ async def test_analyze_endpoint_success(async_client: AsyncClient):
     assert data["sentiment"] in ["BULLISH", "BEARISH", "NEUTRAL"]
     assert -1.0 <= data["signal_score"] <= 1.0
     assert "request_id" in data
+    assert data["target_price"] is None
+    assert data["target_price_evidence"] is None
 
 
 @pytest.mark.asyncio
